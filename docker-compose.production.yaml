@@ -16,9 +16,6 @@ services:
   rails:
     <<: *base
     image: chatwoot:latest
-    depends_on:
-      - postgres
-      - redis
     ports:
       - 3000:3000
     environment:
