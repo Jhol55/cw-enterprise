@@ -1,0 +1,30 @@
+services:
+  base: &base
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        BUNDLE_WITHOUT: 'development:test'
+        RAILS_ENV: production
+        RAILS_SERVE_STATIC_FILES: 'true'
+    env_file: .env
+    volumes:
+      - storage_data:/app/storage
+
+  rails:
+    <<: *base
+    ports:
+      - '0.0.0.0:3000:3000'
+    environment:
+      - NODE_ENV=production
+      - RAILS_ENV=production
+
+  sidekiq:
+    <<: *base
+    environment:
+      - NODE_ENV=production
+    command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    restart: always
+
+volumes:
+  storage_data:
